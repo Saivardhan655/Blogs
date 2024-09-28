@@ -1,9 +1,11 @@
 const Post=require('../models/Post')
 const {StatusCodes}=require('http-status-codes')
 const {BadRequestError,NotFoundError}=require('../errors')
+const User=require('../models/User')
 
 const getAllPosts=async (req,res)=>{
-    const posts=await Post.find({createdBy:req.user.userId}).sort('createdAt')
+    // const posts=await Post.find({createdBy:req.user.userId}).sort('createdAt')
+    const posts=await Post.find().sort('createdAt')
     res.status(StatusCodes.OK).json({posts,count:posts.length})
 }
 const createPost=async(req,res)=>{
@@ -65,6 +67,28 @@ const filteredContent = async (req, res) => {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error retrieving contents', error });
     }
 };
+const getUserPostsByUsername = async (req, res) => {
+    const { username } = req.params;
+    console.log(username)
+    try {
+        const user = await User.findOne({ name:username });
+        console.log(user)
+        if (!user) {
+            throw new NotFoundError('User not found');
+        }
+        const posts = await Post.find({ createdBy: user._id });
+        if (!posts || posts.length === 0) {
+            throw new NotFoundError('No posts found for this user');
+        }
+        res.status(StatusCodes.OK).json({ posts });
+    } 
+    catch (error) {
+        if (error instanceof NotFoundError) {
+            return res.status(StatusCodes.NOT_FOUND).json({ message: error.message });
+        }
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something went wrong while retrieving posts' });
+    }
+};
 
 
 module.exports={
@@ -74,4 +98,5 @@ module.exports={
     deletePost,
     getPost,
     filteredContent,
+    getUserPostsByUsername
 }

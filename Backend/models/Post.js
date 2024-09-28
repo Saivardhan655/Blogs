@@ -2,7 +2,7 @@ const mongoose=require('mongoose')
 const PostSchema=new mongoose.Schema({
     type:{
         type: [String],
-        enum: ['info', 'comedy', 'religious', 'sports','politics','drama','others'],
+        enum: ['info', 'comedy', 'religious', 'sports','politics','cinema','others'],
         required: true
     },
     content:{
