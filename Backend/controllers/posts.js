@@ -43,10 +43,35 @@ const getPost=async(req,res)=>{
     res.status(StatusCodes.OK).json({post})
 }
 
+const filteredContent = async (req, res) => {
+    const { type, minLikes, createdBy } = req.query;
+    if (!type && !createdBy) {
+        throw new BadRequestError('type or createdBy must be provided');
+    }
+    try {
+        const minLikesNum = Number(minLikes) || 0;
+        const query = {
+            likes: { $gte: minLikesNum }
+        };
+        if(type){
+            query.type = type;
+        }
+        if(createdBy){
+            query.createdBy = createdBy;
+        }
+        const contents = await Post.find(query);
+        res.status(StatusCodes.OK).json({ contents });
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error retrieving contents', error });
+    }
+};
+
+
 module.exports={
     getAllPosts,
     createPost,
     updatePost,
     deletePost,
     getPost,
+    filteredContent,
 }
