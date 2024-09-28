@@ -5,22 +5,21 @@ const jwt=require('jsonwebtoken')
 const UserSchema=new mongoose.Schema({
     name:{
         type:String,
-        requires:[true,'please enter password'],
+        required:[true,'Please provide name'],
         minlength:3,
         maxlength:50,
     },
     email:{
         type:String,
-        match:[/\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/,'please provide eamil'],
-        required:true,
-        lowercase:true,
-        unique:true,
+        required:[true,'Please provide email'],
+        match:[/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,'Please provide the correct email'],
+        unique:true
     },
     password:{
         type:String,
-        minlength:3,
-        require:[true,'please enter password'],
-    }
+        required:[true,'Please provide password'],
+        minlength:8,
+    },
 })
 UserSchema.pre('save',async function(next){
     const salt=await bcrypt.genSalt(10);
