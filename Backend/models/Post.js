@@ -1,11 +1,11 @@
 const mongoose=require('mongoose')
 const PostSchema=new mongoose.Schema({
-    Type:{
-        type:String,
-        required:[true,'Please provide type of post'],
-        maxlength:50
+    type:{
+        type: [String],
+        enum: ['info', 'comedy', 'religious', 'sports','politics','drama','others'],
+        required: true
     },
-    Content:{
+    content:{
         type:String,
         required:[true,'PLease provide type of content'],
         maxlength:3000,
