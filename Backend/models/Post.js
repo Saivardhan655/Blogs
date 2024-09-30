@@ -19,6 +19,6 @@ const PostSchema=new mongoose.Schema({
         ref:'User',
         required:[true,'Please provide user']
     }
-},{timestamps:true})
+},{timestamps:true});
 
 module.exports=mongoose.model('Post',PostSchema)

@@ -40,7 +40,7 @@ const getPost=async(req,res)=>{
         _id:postId,createdBy:userId
     })
     if(!post){
-        throw new NotFoundError(`No job with id ${postId}`)
+        throw new NotFoundError(`No Post with id ${postId}`)
     }
     res.status(StatusCodes.OK).json({post})
 }
