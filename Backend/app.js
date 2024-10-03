@@ -17,6 +17,8 @@ const postRouter=require('./routes/posts')
 const userRouter=require('./routes/user')
 const singleuserpost=require('./routes/singleuserdata')
 const singleBlog=require('./routes/singlepost')
+const imagesPostRoutes = require('./routes/images_post');
+
 // error handler
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
@@ -39,7 +41,7 @@ app.use('/api/v1/posts',authenticateUser,postRouter)
 app.use('/api/v1/user',authenticateUser,userRouter)
 app.use('/api/v1',authenticateUser,singleuserpost)
 app.use('/api/v1/blog',authenticateUser,singleBlog)
-
+app.use('/api/v1/blogs',authenticateUser,imagesPostRoutes)
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
