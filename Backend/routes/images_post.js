@@ -4,7 +4,7 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const Post = require('../models/Post'); // Your Post model
-const authenticate = require('../middleware/authentication'); // Assuming you have an authentication middleware
+
 
 // Cloudinary configuration
 cloudinary.config({
@@ -30,7 +30,8 @@ router.post('/create',upload.single('media'), async (req, res) => {
       const { title, content } = req.body;
       const imageUrl = req.file ? req.file.path : '';
   
-      // Get the authenticated user ID from `req.user.userId` (not `req.user._id`)
+      // Get the authenticated user ID from `req.user.userId`
+
       const userId = req.user.userId;
   
       // Create a new blog post with the authenticated user ID as `createdBy`
@@ -40,7 +41,7 @@ router.post('/create',upload.single('media'), async (req, res) => {
         imageUrl: imageUrl,
         createdBy: userId,  // Use the userId from the token
       });
-  
+      
       await newPost.save();
       res.status(201).json({ message: 'Blog post created successfully', post: newPost });
     } catch (err) {

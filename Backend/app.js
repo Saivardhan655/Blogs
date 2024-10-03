@@ -1,6 +1,5 @@
 require('dotenv').config();
 require('express-async-errors');
-
 const helmet=require('helmet')
 const cors=require('cors')
 const xss=require('xss-clean')
@@ -11,6 +10,17 @@ const app = express();
 
 const connectDB=require('./db/connect')
 const authenticateUser=require('./middleware/authentication')
+
+const corsOptions = {
+  origin: 'http://localhost:3001', // Replace with your frontend's URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow Authorization header for JWT
+  credentials: true, // Allows cookies and authorization headers (e.g., JWT)
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
 
 const authRouter=require('./routes/auth')
 const postRouter=require('./routes/posts')
