@@ -13,17 +13,21 @@ const PostSchema = new mongoose.Schema({
   },
   likes: {
     type: Number,
-    default: 0, // You can set a default value, so it starts at 0
+    default: 0,
     required: [true, 'Please provide number of likes']
   },
   createdBy: {
     type: mongoose.Types.ObjectId,
-    ref: 'User', // Reference to the User model
+    ref: 'User',
     required: [true, 'Please provide the user']
   },
   imageUrl: {
-    type: String, // Store the Cloudinary URL here
-    required: false // Not all posts may have images, so make it optional
+    type: String,
+    required: false
+  },
+  tags: {
+    type: [String], // Array of tags for the post
+    required: false // Tags are optional but encouraged for better recommendations
   }
 }, { timestamps: true });
 

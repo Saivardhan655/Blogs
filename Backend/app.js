@@ -52,6 +52,8 @@ app.use('/api/v1/user',authenticateUser,userRouter)
 app.use('/api/v1',authenticateUser,singleuserpost)
 app.use('/api/v1/blog',authenticateUser,singleBlog)
 app.use('/api/v1/blogs',authenticateUser,imagesPostRoutes)
+
+
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
