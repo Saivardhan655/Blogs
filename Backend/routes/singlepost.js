@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getPost, addComment ,getonlyPost} = require('../controllers/getSinglepost');
-const {likePost}=require('../controllers/likeAPost')
+const {likePost}=require('../controllers/likeAPost.js')
 
 router.route('/:id')
   .get(getPost)

@@ -21,6 +21,13 @@ const UserSchema=new mongoose.Schema({
         required:[true,'Please provide password'],
         minlength:8,
     },
+    likedPosts: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Post', // References to liked posts
+      }],
+      favoriteTags: [{
+        type: String, // Store favorite tags based on interactions
+      }],
 })
 UserSchema.pre('save',async function(next){
     const salt=await bcrypt.genSalt(10);

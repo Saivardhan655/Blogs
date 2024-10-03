@@ -2,6 +2,7 @@ const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 const { StatusCodes } = require('http-status-codes');
 const { BadRequestError, NotFoundError } = require('../errors');
+const addInteraction=require('./Interaction');
 
 const getPost = async (req, res) => {
   const { user: { userId }, params: { id: postId } } = req;
@@ -30,6 +31,7 @@ const addComment = async (req, res) => {
     if (!post) {
       throw new NotFoundError(`No post with id ${postId}`);
     }
+    addInteraction(userId, postId, 'comment');
     const comment = await Comment.create({
       postId,
       userId,
