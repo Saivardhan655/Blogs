@@ -4,7 +4,7 @@
 This project aims to provide a backend API for a blog application built using Node.js, Express, and MongoDB. It allows users to manage blog posts with features for creating, reading, updating, and deleting posts.
 
 ## Directory Structure
-[Web page URL of the project](http://your-project-url.com/)  <!-- Update with your actual project URL -->
+[Web page URL of the project](ec2-52-201-241-209.compute-1.amazonaws.com)  <!-- Update with your actual project URL -->
 
 ## Project Components
 
