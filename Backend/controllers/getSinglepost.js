@@ -1,5 +1,5 @@
 const Post = require('../models/Post');
-const Comment = require('../models/Comment');
+const Comment = require('../models/comment');
 const { StatusCodes } = require('http-status-codes');
 const { BadRequestError, NotFoundError } = require('../errors');
 const addInteraction=require('./Interaction');
