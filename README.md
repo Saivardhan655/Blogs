@@ -42,7 +42,7 @@ This will build the Docker image and start the application along with the MongoD
 5. Access the Application
 The application will be accessible at http://<your-ec2-instance-public-ip>:3000.
 
-Deployment on AWS EC2
+**Deployment on AWS EC2
 -Launch an EC2 instance and SSH into it.
 -Install Docker and Docker Compose.
 -Clone the repository and navigate to the project directory.
