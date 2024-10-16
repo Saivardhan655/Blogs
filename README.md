@@ -43,18 +43,18 @@ This will build the Docker image and start the application along with the MongoD
 The application will be accessible at http://<your-ec2-instance-public-ip>:3000.
 
 Deployment on AWS EC2
-Launch an EC2 instance and SSH into it.
-Install Docker and Docker Compose.
-Clone the repository and navigate to the project directory.
-Configure security groups to allow inbound traffic on port 3000.
-Run the application using Docker Compose.
+-Launch an EC2 instance and SSH into it.
+-Install Docker and Docker Compose.
+-Clone the repository and navigate to the project directory.
+-Configure security groups to allow inbound traffic on port 3000.
+-Run the application using Docker Compose.
 
 
-Important Notes
-Make sure to secure your MongoDB URI and not expose sensitive credentials.
-For production environments, consider using environment variables management tools or services.
+*Important Notes
+-Make sure to secure your MongoDB URI and not expose sensitive credentials.
+-For production environments, consider using environment variables management tools or services.
 Contributing
-Feel free to submit issues or pull requests if you have suggestions or improvements for the project.
+-Feel free to submit issues or pull requests if you have suggestions or improvements for the project.
 
 License
 This project is licensed under the MIT License. See the LICENSE file for details.
