@@ -4,44 +4,31 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-        
+        uses: actions/checkout@v2
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-        
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          
-      - name: Extract metadata for Docker
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: saivardhan24/backend-blog
-          tags: |
-            type=raw,value=latest
-            type=sha,format=short
-            
+
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v2
         with:
           context: ./Backend
           file: ./Backend/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=saivardhan24/backend-blog:buildcache
-          cache-to: type=registry,ref=saivardhan24/backend-blog:buildcache,mode=max
+          tags: saivardhan24/backend-blog:latest
           
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -50,27 +37,12 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            # Pull the new image
             sudo docker pull saivardhan24/backend-blog:latest
-            
-            # Stop and remove the existing container
             sudo docker stop blog-back || true
             sudo docker rm blog-back || true
-            
-            # Remove unused images
-            sudo docker image prune -f
-            
-            # Run the new container
-            sudo docker run -d \
-              --name blog-back \
-              --restart unless-stopped \
-              -p 3000:3000 \
-              --network blog-network \
-              -e MONGO_URI="${{ secrets.MONGO_URI }}" \
-              -e PORT="${{ secrets.PORT }}" \
-              -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
-              -e JWT_LIFETIME="${{ secrets.JWT_LIFETIME }}" \
+            sudo docker run -d --name blog-back -p 3000:3000 \
+              -e MONGO_URI=${{ secrets.MONGO_URI }} \
+              -e PORT=${{ secrets.PORT}} \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET}} \
+              -e JWT_LIFETIME=${{ secrets.JWT_LIFETIME}} \
               saivardhan24/backend-blog:latest
-            
-            # Verify the container is running
-            sudo docker ps | grep blog-back
