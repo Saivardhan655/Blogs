@@ -41,7 +41,7 @@ jobs:
             sudo docker stop blog-back || true
             sudo docker rm blog-back || true
             sudo docker run -d --name blog-back -p 3000:3000 \
-              -e MONGO_URI=${{ secrets.DB_HOST }} \
+              -e MONGO_URI=${{ secrets.MONGO_URI }} \
               -e PORT=${{ secrets.PORT}} \
               -e JWT_SECRET=${{ secrets.JWT_SECRET}} \
               -e JWT_LIFETIME=${{ secrets.JWT_LIFETIME}} \
