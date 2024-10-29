@@ -29,6 +29,15 @@ jobs:
           file: ./Backend/Dockerfile
           push: true
           tags: saivardhan24/backend-blog:latest
-
-      - name: Verify Pushed Image
-        run: docker pull saivardhan24/backend-blog:latest
+          
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo docker pull saivardhan24/backend-blog:latest
+            sudo docker stop blog-back || true
+            sudo docker rm blog-back || true
+            sudo docker run -d --name blog-back -p 3000:3000 saivardhan24/backend-blog:latest
