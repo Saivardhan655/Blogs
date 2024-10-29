@@ -12,10 +12,10 @@ const connectDB=require('./db/connect')
 const authenticateUser=require('./middleware/authentication')
 
 const corsOptions = {
-  origin: 'http://localhost:3001', // Replace with your frontend's URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow Authorization header for JWT
-  credentials: true, // Allows cookies and authorization headers (e.g., JWT)
+  origin: 'http://localhost:3001',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, 
 };
 
 // Apply CORS middleware
