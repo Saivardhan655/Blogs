@@ -1,73 +1,181 @@
 # Blog Backend
 
-This project provides the backend for a blog application, allowing users to create, read, update, and delete blog posts. The backend is built using Node.js and connects to a MongoDB database for data storage.
+This is the backend for a blogging application built with Node.js and MongoDB. It provides APIs for blog posts, comments, tagging, and user authentication, and it includes a recommendation system for posts. The project is deployed on AWS EC2 using Docker and GitHub Actions for CI/CD.
+
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Features](#features)
+- [Directory Structure](#directory-structure)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Docker Setup](#docker-setup)
+- [CI/CD with GitHub Actions](#cicd-with-github-actions)
+- [Deployment to EC2](#deployment-to-ec2)
+- [API Documentation](#api-documentation)
+
+## Project Overview
+
+This backend is designed to support a blog platform with features such as user authentication, CRUD operations for posts, and a tagging system that enhances post recommendations. A CI/CD pipeline is implemented to deploy updates automatically to an EC2 instance upon each push to the main branch.
+
+## Features
+
+- **User Authentication**: Registration and login with JWT-based authentication.
+- **Blog Management**: CRUD operations for blog posts.
+- **Commenting**: Allows users to comment on blog posts.
+- **Tagging System**: Users can add tags to posts, which helps improve recommendations.
+- **Recommender System**: Provides post recommendations based on tags.
 
 ## Directory Structure
 
-- **src/**: Contains the source code for the project.
-  - **controllers/**: Controllers for handling requests and responses.
-  - **models/**: Mongoose models for defining data schemas.
-  - **routes/**: Express routes for API endpoints.
-  - **config/**: Configuration files, including database connection settings.
-  - **middleware/**: Middleware functions for request handling.
-- **Dockerfile**: Docker configuration for building the backend image.
-- **docker-compose.yml**: Configuration for running the backend and MongoDB in containers.
-- **.env**: Environment variables for the project, including `MONGO_URI`.
-- **package.json**: Node.js dependencies and scripts.
-
-## Setup Instructions
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/your-username/blog-backend.git
-cd blog-backend
+```plaintext
+Backend/
+├── config/                # Configuration files
+├── controllers/           # Controller logic
+├── middleware/            # Authentication and error handling middleware
+├── models/                # MongoDB models
+├── routes/                # Express routes
+├── utils/                 # Utility functions
+└── server.js              # Main server file
 ```
-2. Install Dependencies
-```bash
-npm install
+
+## Getting Started
+
+### Prerequisites
+
+Ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (v14 or later)
+- [Docker](https://www.docker.com/)
+- [MongoDB](https://www.mongodb.com/)
+
+### Installation
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/yourusername/backend-blog.git
+   cd backend-blog/Backend
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables** (see below).
+
+4. **Start the server**:
+
+   ```bash
+   npm start
+   ```
+
+The server should now be running on `http://localhost:3000`.
+
+## Environment Variables
+
+Create a `.env` file in the `Backend` directory and add the following variables:
+
+```plaintext
+MONGO_URI=your_mongo_db_connection_string
+PORT=your_port
+JWT_SECRET=your_jwt_secret
+JWT_LIFETIME=jwt_token_lifetime
 ```
-3. Set Up Environment Variables
-Create a .env file in the root directory and add your MongoDB connection string:
-```bash
-MONGO_URI=mongodb+srv://<username>:<password>@<cluster-name>/Blogs?retryWrites=true&w=majority
+
+## Docker Setup
+
+1. **Build the Docker image**:
+
+   ```bash
+   docker build -t your_dockerhub_username/backend-blog .
+   ```
+
+2. **Run the Docker container**:
+
+   ```bash
+   docker run -d --name blog-back -p 3000:3000 \
+     -e MONGO_URI=your_mongo_db_connection_string \
+     -e PORT=3000 \
+     -e JWT_SECRET=your_jwt_secret \
+     -e JWT_LIFETIME=jwt_token_lifetime \
+     your_dockerhub_username/backend-blog
+   ```
+
+## CI/CD with GitHub Actions
+
+The GitHub Actions workflow is configured to automate the CI/CD pipeline, building the Docker image and deploying it to an EC2 instance upon a push to the main branch.
+
+### Workflow File
+
+The workflow file `ci-cd.yml` is located in the `.github/workflows` folder.
+
+```yaml
+name: CI/CD for Backend Docker
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./Backend
+          file: ./Backend/Dockerfile
+          push: true
+          tags: saivardhan24/backend-blog:latest
+          
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo docker pull saivardhan24/backend-blog:latest
+            sudo docker stop blog-back || true
+            sudo docker rm blog-back || true
+            sudo docker run -d --name blog-back -p 3000:3000 \
+              -e MONGO_URI="${{ secrets.MONGO_URI }}" \
+              -e PORT="${{ secrets.PORT }}" \
+              -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+              -e JWT_LIFETIME="${{ secrets.JWT_LIFETIME }}" \
+              saivardhan24/backend-blog:latest
 ```
-4. Run the Application
-You can run the application using Docker:
-```bash
-docker-compose up --build
-```
-This will build the Docker image and start the application along with the MongoDB service.
 
-5. Access the Application
-The application will be accessible at http://<your-ec2-instance-public-ip>:3000.
+### Secrets Configuration
 
-Deployment on AWS EC2
-Launch an EC2 instance and SSH into it.
-Install Docker and Docker Compose.
-Clone the repository and navigate to the project directory.
-Configure security groups to allow inbound traffic on port 3000.
-Run the application using Docker Compose.
+Configure the following secrets in your GitHub repository settings:
 
+- **DOCKER_USERNAME**: Your Docker Hub username
+- **DOCKER_PASSWORD**: Your Docker Hub password
+- **SSH_HOST**: The public IP address of your EC2 instance
+- **SSH_USERNAME**: The SSH username for your EC2 instance
+- **SSH_KEY**: The private SSH key for accessing EC2
+- **MONGO_URI**: MongoDB connection URI
+- **PORT**: Port on which the backend server should run (e.g., `3000`)
+- **JWT_SECRET**: Secret key for JWT
+- **JWT_LIFETIME**: JWT token lifetime (e.g., `1d`)
 
-Important Notes
-Make sure to secure your MongoDB URI and not expose sensitive credentials.
-For production environments, consider using environment variables management tools or services.
-Contributing
-Feel free to submit issues or pull requests if you have suggestions or improvements for the project.
+## Deployment to EC2
 
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-
-```bash
-
-
-### Instructions for Use
-
-1. **Replace Placeholders**: Make sure to replace `<username>`, `<password>`, `<cluster-name>`, and `https://github.com/your-username/blog-backend.git` with your actual MongoDB credentials and GitHub repository URL.
-2. **Save the File**: Copy and paste this text into a file named `README.md` in the root directory of your project.
-
-This `README.md` provides comprehensive documentation for your project, including setup instructions, directory structure, deployment information, and contribution guidelines. Let me know if you need any changes or additional information!
-
-```
+The backend is deployed to an AWS EC2 instance. Upon each push to the main branch, GitHub Actions builds and pushes the Docker image to Docker Hub and then deploys the container to EC2, ensuring the application is always up-to-date.
