@@ -179,3 +179,6 @@ Configure the following secrets in your GitHub repository settings:
 ## Deployment to EC2
 
 The backend is deployed to an AWS EC2 instance. Upon each push to the main branch, GitHub Actions builds and pushes the Docker image to Docker Hub and then deploys the container to EC2, ensuring the application is always up-to-date.
+
+
+### feel free to contribute.
